@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【藝遊未盡】文化DNA心理測驗</title>
+    <style>
+        :root {
+            --primary-color: #6a5acd;
+            --secondary-color: #ff6f61;
+            --bg-color: #f8f9fa;
+        }
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        #quiz-container { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 500px; text-align: center; }
+        h1 { color: var(--primary-color); font-size: 1.5rem; margin-bottom: 1.5rem; }
+        .question { display: none; }
+        .question.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        button { display: block; width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #eee; border-radius: 10px; background: white; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+        button:hover { background: #f0f0ff; border-color: var(--primary-color); }
+        #result { display: none; animation: fadeIn 0.8s; }
+        .tag { display: inline-block; background: var(--secondary-color); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; margin: 5px; }
+        .cta-button { background: var(--primary-color); color: white; border: none; font-weight: bold; margin-top: 20px; text-decoration: none; display: block; }
+        .cta-button:hover { background: #483d8b; color: white; }
+    </style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <div id="intro">
+        <h1>🎨 【藝遊未盡】<br>測出你的文化DNA</h1>
+        <p>跨越時空，找尋你的天命文化基地</p>
+        <button onclick="startQuiz()" style="background: var(--primary-color); color: white; border:none;">開始測驗</button>
+    </div>
+
+    <div id="quiz-content" style="display:none;">
+        <div class="question active" id="q1">
+            <p>Q1. 週末午後，你最希望怎麼度過？</p>
+            <button onclick="next(1, 'A')">獨自漫步老街，挖掘小店</button>
+            <button onclick="next(1, 'B')">去新潮數位藝術展拍照打卡</button>
+            <button onclick="next(1, 'C')">在家靜靜讀完一本古老傳說</button>
+        </div>
+        <div class="question" id="q2">
+            <p>Q2. 若穿越回古代，你覺得自己是？</p>
+            <button onclick="next(2, 'A')">巧奪天工的工匠</button>
+            <button onclick="next(2, 'B')">遊歷四方的墨客</button>
+            <button onclick="next(2, 'D')">熱血的民俗探險家</button>
+        </div>
+        <div class="question" id="q3">
+            <p>Q3. 市集裡什麼東西最吸引你？</p>
+            <button onclick="next(3, 'A')">繁複色彩的民俗織品</button>
+            <button onclick="next(3, 'C')">優雅精緻的茶葉禮盒</button>
+            <button onclick="next(3, 'B')">節奏感強的傳統樂器</button>
+        </div>
+        </div>
+
+    <div id="result">
+        <h2 id="res-title"></h2>
+        <div id="res-tags"></div>
+        <p id="res-desc" style="text-align: left; color: #666;"></p>
+        <hr>
+        <p><strong>📍 推薦你的文化基地：</strong><br><span id="res-spot"></span></p>
+        
+        <a href="您的比賽簡報網址" class="cta-button" target="_blank">🏆 點我參加【百大百藝】創作賽</a>
+    </div>
+</div>
+
+<script>
+    let scores = { A: 0, B: 0, C: 0, D: 0 };
+    let currentStep = 1;
+    const totalQuestions = 3; // 目前設定三題，可自行增加
+
+    function startQuiz() {
+        document.getElementById('intro').style.display = 'none';
+        document.getElementById('quiz-content').style.display = 'block';
+    }
+
+    function next(step, type) {
+        scores[type]++;
+        document.getElementById('q' + step).classList.remove('active');
+        if (step < totalQuestions) {
+            document.getElementById('q' + (step + 1)).classList.add('active');
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById('quiz-content').style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+
+        // 找出最高分的類型
+        let topType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+        
+        const data = {
+            'A': { title: '匠心獨運守護者', tags: ['#細節控', '#手作魂'], desc: '你內心住著一位細膩工匠，著迷於時間沉澱後的痕跡。', spot: '宜蘭傳藝中心、鹿港老街' },
+            'B': { title: '靈感捕手創作者', tags: ['#視覺動物', '#創新'], desc: '你擅長捕捉日常中稍縱即逝的靈感，是天生的故事家。', spot: '台北華山、高雄駁二' },
+            'C': { title: '文人雅士品味家', tags: ['#美學', '#寧靜'], desc: '你追求生活的美學與和諧，喜歡在茶香中尋找靈魂。', spot: '台北故宮、坪林茶博館' },
+            'D': { title: '熱血風俗探險家', tags: ['#行動派', '#熱血'], desc: '你對民俗傳說充滿熱情，喜歡體驗最接地氣的文化力。', spot: '北港朝天宮、平溪天燈區' }
+        };
+
+        const res = data[topType];
+        document.getElementById('res-title').innerText = res.title;
+        document.getElementById('res-desc').innerText = res.desc;
+        document.getElementById('res-spot').innerText = res.spot;
+        
+        let tagHtml = '';
+        res.tags.forEach(t => tagHtml += `<span class="tag">${t}</span>`);
+        document.getElementById('res-tags').innerHTML = tagHtml;
+    }
+</script>
+
+</body>
+</html>
